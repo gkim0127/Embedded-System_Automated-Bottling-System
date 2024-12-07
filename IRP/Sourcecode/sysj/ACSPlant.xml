@@ -1,0 +1,37 @@
+<System xmlns="http://systemjtechnology.com">
+	<SubSystem Name="SS1" Local="true">
+		<ClockDomain Name="ACSPlantCD" Class="ACSPlant">
+
+
+
+			<oSignal Name="smokeAlarmHealth" 			To="ACSControllerCD.smokeAlarmHealth" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="31051" />
+			<oSignal Name="humanPresenceManufacture" 			To="ACSControllerCD.humanPresenceManufacture" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="31051" />
+			<oSignal Name="badgeLocation" 			To="ACSControllerCD.badgeLocation" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="31051" />
+			<oSignal Name="badgeAccessPermission" 			To="ACSControllerCD.badgeAccessPermission" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="31051" />
+			<oSignal Name="cardAccessPermission" 			To="ACSControllerCD.cardAccessPermission" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="31051" />
+			<oSignal Name="doorReader" 			To="ACSControllerCD.doorReader" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="31051" />
+			<oSignal Name="humanAcrossDoor" 			To="ACSControllerCD.humanAcrossDoor" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="31051" />
+			<oSignal Name="smokeAlarmDetected" 			To="ACSControllerCD.smokeAlarmDetected" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="31051" />
+			
+			
+			
+			
+			
+			<iSignal Name="SirenOn"           Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="32050" />
+			<iSignal Name="SirenOff"           Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="32050" />
+			<iSignal Name="DoorLock"           Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="32050" />
+			<iSignal Name="DoorUnlock"           Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="32050" />
+			<iSignal Name="enableManufacture"           Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="32050" />
+			<iSignal Name="disableManufacture"           Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="32050" />
+			
+			
+			<oSignal Name="SirenOnE"           To="UI.SirenOnE"           Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="33052" />
+			<oSignal Name="SirenOffE"           To="UI.SirenOffE"           Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="33052" />
+			<oSignal Name="DoorLockE"           To="UI.DoorLockE"           Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="33052" />
+			<oSignal Name="DoorUnlockE"           To="UI.DoorUnlockE"           Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="33052" />
+			<oSignal Name="enableManufactureE"           To="UI.enableManufactureE"           Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="33052" />
+			<oSignal Name="disableManufactureE"           To="UI.disableManufactureE"           Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="33052" />
+			
+		</ClockDomain>
+	</SubSystem>
+</System>

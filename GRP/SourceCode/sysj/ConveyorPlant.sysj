@@ -1,0 +1,107 @@
+ConveyorPlant(
+		input signal motConveyorOnOff, enableConveyor;
+		input signal enable, bottleAtPos5; 
+		output signal bottleAtLoad, bottleAtPos1, bottleLeftPos5,bottleAtPos1R;
+		output signal bottleAtLoadE, bottleAtPos1E, bottleLeftPos5E, bottleEmptyE;  // these output signals are sent to the UI
+		output signal bottleDoneE; 
+		
+		input signal bottleLeftPos5EConveyor; // from rotary controller
+		output signal bottleLeftPos5RotaryE; // to rotary
+		
+		input signal enableConveyorMain; // from MainController when an order is submitted by the user
+		
+		)
+->
+{
+	
+	signal bottleDec, bottleAt1, bottleAtL, bottleAt5, bottledone, motorOn, motorOff, empty, bottleEmpty, bottleLeftPos5Rotary;
+	pause;
+
+	{//Conveyor
+		while(true){
+			abort (immediate (motConveyorOnOff)){
+				System.out.println("motorOff");
+				sustain motorOff;
+			}
+			
+			abort((!motConveyorOnOff)){
+				System.out.println("motorOn");
+				sustain motorOn;
+			}
+			
+		}
+	}
+	||
+	{
+		loop {
+			 // -------------- manual mode --------------				
+//			await(enable);
+//			System.out.println("Line 1: bottleAtLoad");
+//			emit bottleAtLoad; // state 1, default state
+//			
+//			await(enable);
+//			System.out.println("Line 2: bottleAtPos1");
+//			emit bottleAtPos1; // state 2
+//			
+//			await(enable);
+//			System.out.println("Line 3: bottleLeftPos5");
+//			emit bottleLeftPos5; // state 3
+//			
+//			await(enable);
+//			System.out.println("Line 4: bottledone");
+//			emit bottledone; // state 3
+//			
+//			await(enable);
+//			System.out.println("Line 5: bottleEmpty");
+//			emit bottleEmpty;
+			
+			
+			// -------------- auto mode --------------
+			await(enableConveyorMain); // signal from main controller to start when product submission is detected
+			System.out.println("Line 1: bottleAtLoad");
+			emit bottleAtLoad; // state 1, default state
+				
+			// automatically transition to state2
+			waitl(1 s);
+			System.out.println("Line 2: bottleAtPos1");
+			emit bottleAtPos1; // state 2
+			waitl(1 s);
+			emit bottleAtPos1R; // send out signal to rotary to enable it (in place of manual button press atm)
+
+			// going to filler
+			System.out.println("Going to filler, emit empty conveyor");
+			emit bottleEmpty;
+				
+			// done with capper, receive signal from rotary turntable here
+			await(bottleAtPos5);
+			System.out.println("Line 3: bottleLeftPos5");
+			waitl(1 s); // allow some time to change state
+			emit bottleLeftPos5; // state 3
+			emit bottleLeftPos5Rotary; // signal to rotary the bottle has left position 5
+				
+			waitl(1 s);
+			System.out.println("Line 4: bottledone");
+			emit bottledone; // state 3
+				
+			waitl(1 s);
+			System.out.println("Line 5: bottleEmpty");
+			emit bottleEmpty;
+		}
+	}
+	||
+	{// To viz
+		{while(true){present(bottleAtPos1){emit bottleAtPos1E;} pause;}}
+		||
+		{while(true){present(bottleLeftPos5){emit bottleLeftPos5E;} pause;}}
+		||
+		{while(true){present(bottleAtLoad){emit bottleAtLoadE;} pause;}}
+		||
+		{while(true){present(bottledone){emit bottleDoneE;} pause;}}
+		||
+		{while(true){present(bottleEmpty){emit bottleEmptyE;} pause;}}
+		||
+		{while(true){present(bottleLeftPos5Rotary){emit bottleLeftPos5RotaryE;} pause;}}
+		
+	}
+
+}

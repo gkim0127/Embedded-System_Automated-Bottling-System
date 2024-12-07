@@ -1,0 +1,89 @@
+CapLoaderController(
+		input signal bottleAtPos3, pusherRetracted,pusherExtended,WPgripped,armAtSource,armAtDest,empty,request; // bottleAtPos3E
+		input signal bottleDonePos4;
+		output signal pusherExtend,vacOn,armSource,armDest, bottleDonePos3;
+		input Integer signal mode;
+		input signal pusherExtendM,vacOnM,armSourceM,armDestM;
+		input signal bottleAtPos4Capper;
+		)
+->{		
+	signal auto, manual;
+	emit auto; // default to auto mode
+	loop {
+		abort(manual) {
+			System.out.println("Waiting for bottleAtPos3 from Rotary TurnTable");
+			await(bottleAtPos3);
+			System.out.println("bottleAtPos3 detected");
+			
+			abort(pusherExtended){
+				sustain pusherExtend;
+			}
+			pause;
+			
+			System.out.println("Waiting for pusherRetracted signal");
+			await(pusherRetracted);
+			
+			abort(armAtSource){
+				sustain armSource;
+			}
+			System.out.println("armAtSource detected, aborted");
+			pause;
+			abort(armAtDest){
+				{sustain vacOn;}
+				||
+				{await (WPgripped);
+					System.out.println("WPgripped");
+					sustain armDest;}
+			}
+			System.out.println("armAtDest");
+			System.out.println("Process Complete, emit bottleDonePos3");
+			
+			abort(bottleAtPos4Capper){
+				sustain bottleDonePos3;
+			}
+			
+//			emit bottleDonePos3;
+			pause;
+		}
+	}
+	||
+	{
+		loop {
+			await(mode);
+			if((Integer)#mode == 1){
+				emit manual;
+	//			System.out.println("manual mode ");
+			} else {
+				emit auto;
+	//			System.out.println("auto mode ");
+			}
+			pause;	
+		}
+	}
+	||
+		loop{//Manual
+			await(manual);
+			abort(auto){
+			
+				{loop{present(pusherExtendM){emit pusherExtend;} pause;}}
+				||
+				{loop{present(vacOnM){emit vacOn;} pause;}} // emit bottleDonePos3; 
+				||
+				{loop{present(armSourceM){emit armSource;} pause;}}
+				||
+				{loop{present(armDestM){emit armDest;} pause;}}
+		}
+	}
+//	||
+//	{
+//		abort(bottleAtPos4Capper){
+//			while(true) {
+//				present(bottleDonePos3){
+//					sustain bottleDonePos3;
+//				}
+//				pause;
+//			}
+//		}
+//	}
+	
+}

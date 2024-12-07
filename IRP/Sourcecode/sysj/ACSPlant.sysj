@@ -1,0 +1,60 @@
+ACSPlant(
+	output signal smokeAlarmHealth, humanPresenceManufacture, badgeLocation, badgeAccessPermission;
+	output signal cardAccessPermission, doorReader, humanAcrossDoor, smokeAlarmDetected;
+
+	input signal SirenOn,SirenOff ,DoorLock, DoorUnlock , enableManufacture, disableManufacture;
+	output signal SirenOnE,SirenOffE ,DoorLockE, DoorUnlockE , enableManufactureE, disableManufactureE;
+	
+
+		)
+
+
+
+
+->{
+	class GUI implements java.lang.Runnable {
+		public void run() {
+			org.compsys704.ACSGUI.main(null);
+		}
+		}
+	
+	new Thread(new GUI()).start();
+
+		loop{
+			loop{
+				abort(SirenOn){
+				while(true){emit SirenOffE;  pause;}
+				}
+				abort(SirenOff){
+				while(true){emit SirenOnE;pause;}
+				}
+			}
+			||
+			loop{
+				abort(disableManufacture){
+				while(true){emit enableManufactureE; pause;}
+				}
+				abort(enableManufacture){
+				while(true){emit disableManufactureE; pause;}
+				}
+				
+			}
+		
+			||
+			loop{
+				abort(DoorUnlock){
+				while(true){emit DoorLockE;
+				pause;}
+				}
+				abort(DoorLock){
+				while(true){emit DoorUnlockE; pause;}
+				}
+				
+			}
+		
+		
+		}
+
+
+
+}

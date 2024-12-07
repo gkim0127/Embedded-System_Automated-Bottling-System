@@ -1,0 +1,128 @@
+capperController(
+		input signal bottleAtPos4, gripperZAxisLowered, gripperZAxisLifted, gripperTurnHomePos, gripperTurnFinalPos, capGripped, capUngripped, bottleClamped, bottleUnclamped;
+		output signal cylPos5ZaxisExtend, gripperTurnRetract, gripperTurnExtend, capGripperPos5Extend, cylClampBottleExtend, capperJobDone;
+		
+		input Integer signal mode;
+		input signal cylPos5ZaxisExtendM, gripperTurnRetractM, gripperTurnExtendM, capGripperPos5ExtendM, cylClampBottleExtendM, capperJobDoneM;
+		
+		output signal bottleDonePos4;
+//		input signal bottleAtPos4Capper;
+		)
+->
+{
+	// basic operation 
+
+	//1. Check if a bottle is at position 4, if not, wait until it arrives (bottleAtPos4)
+	//2. Clamp the bottle and lower the gripper (cylClampBottleExtend, cylPos5ZaxisExtend)
+	//3. Wait until the gripper is lowered (gripperZAxisLowered, and grip the cap (capGripperPos5Extend)
+	//4. Twist the gripper (gripperTurnExtend)
+	//5. Release the cap (absence of capGripperPos5Extend)
+	//6. Untwist the gripper (gripperTurnRetract) --> home pos 
+	//7. Raise the gripper (absence of cylPos5ZaxisExtend) 
+
+		signal modeA; 
+		signal modeM;
+		
+		emit modeA; // default to start in auto mode
+		
+		loop{ 
+
+		// signal selection
+			{
+				loop {
+					await(mode);
+					if ((Integer)#mode == 0) {
+						emit modeA;
+					} else if ((Integer)#mode == 1) {
+						emit modeM;
+					} else {
+						pause;
+					}
+				}
+			} // end of signal selection loop
+			||
+			// auto
+			{
+				loop {
+					
+					await(modeA);
+					System.out.println("Auto Mode selected");
+					abort(modeM){
+						loop{
+//							abort(bottleAtPos5)
+								await(bottleAtPos4);
+								System.out.println("bottleAtPos444");
+								waitl(1 s);
+								abort(gripperZAxisLifted){
+									halt;
+								}
+								abort(gripperTurnHomePos){
+									sustain gripperTurnRetract;
+								}
+								trap(T){
+									{sustain cylPos5ZaxisExtend;}
+									||
+									{	
+										await(gripperZAxisLowered);
+										waitl(1 s);
+										{
+											//System.out.println("bottle clamp");
+											sustain cylClampBottleExtend;
+										}
+										||
+										{	
+											//System.out.println("grip cap");
+											sustain capGripperPos5Extend;
+										}
+										||
+										{	
+											await(capGripped);
+											waitl(1 s);
+											//System.out.println("twist gripper");
+											sustain gripperTurnExtend;
+										}
+										||
+										{
+											await(gripperTurnFinalPos);
+											waitl(1 s);
+											exit(T);
+										}
+									}
+								}
+								await(gripperZAxisLifted);
+//								waitl(1 s);
+								
+								abort(bottleAtPos4){
+//								abort(bottleAtPos4Capper){
+									sustain bottleDonePos4;
+//									sustain capperJobDone;
+								
+								}
+								waitl(1 s);
+								}
+							}
+			} // end of auto loop
+			||
+			// Manual 
+			{
+				loop{
+					await(modeM);
+					abort(modeA){
+						{loop{present(cylPos5ZaxisExtendM){emit cylPos5ZaxisExtend;} pause;}}
+						||
+						{loop{present(gripperTurnRetractM){emit gripperTurnRetract;} pause;}}
+						||
+						{loop{present(gripperTurnExtendM){emit gripperTurnExtend;} pause;}}
+						||
+						{loop{present(capGripperPos5ExtendM){emit capGripperPos5Extend;} pause;}}
+						||
+						{loop{present(cylClampBottleExtendM){emit cylClampBottleExtend;} pause;}}
+						||
+						{loop{present(capperJobDoneM){emit capperJobDone;} pause;}}
+					}
+				}
+			}	// end of manual loop
+			
+		}// end of outer loop
+	}
+}

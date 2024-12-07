@@ -1,0 +1,94 @@
+MainController(
+		// signals here
+		input int signal LiquidAmount1, LiquidAmount2, LiquidAmount3, LiquidAmount4, BottleQuantity;
+		
+		output int signal LiquidAmount1E, LiquidAmount2E, LiquidAmount3E, LiquidAmount4E, BottleQuantityE;
+		
+		output signal enableConveyorMain; // used to enable conveyor in conveyor plant
+		input signal disableConveyorMain; // from filler plant when all bottles are filled
+		
+		input signal systemEnable; // input from POS GUI
+		output signal systemEnableFiller; // output to filler plant
+
+		)
+->{
+	
+	signal allValid, checkSystemEnable;
+	
+	loop{
+		// check what values are received from the POS GUI
+		waitl(2 s);
+		System.out.println(#LiquidAmount1);
+		System.out.println(#LiquidAmount2);
+		System.out.println(#LiquidAmount3);
+		System.out.println(#LiquidAmount4);
+		System.out.println(#BottleQuantity);
+//		System.out.println(#systemEnable);
+		System.out.println("");
+		pause;
+	}
+	||
+	{
+		while(true) {
+			// validaton checks
+			if (((#LiquidAmount1 + #LiquidAmount2 + #LiquidAmount3 + #LiquidAmount4) == 100) && (#BottleQuantity > 0)) {
+//				waitl(2 s);
+				emit allValid;
+//				System.out.println("Valid Input");
+			} else {
+//				waitl(2 s);
+//				System.out.println("INVALID Input");
+				pause;
+			}
+			pause;
+		}
+	}
+	||
+	{
+		while(true)	{
+			await(systemEnable);
+			pause;
+		
+			abort(disableConveyorMain){
+
+					{
+						sustain LiquidAmount1E(#LiquidAmount1);;
+					}
+					||
+					{
+						sustain LiquidAmount2E(#LiquidAmount2);;
+					}
+					||
+					{
+						sustain LiquidAmount3E(#LiquidAmount3);;
+					}
+					||
+					{
+						sustain LiquidAmount4E(#LiquidAmount4);;
+					}
+					||
+					{
+						sustain BottleQuantityE(#BottleQuantity);;
+					}
+					||
+					{
+						sustain enableConveyorMain;
+					}
+
+			} pause;
+			System.out.println("Aborted: disableConveyorMain detected");
+
+		}
+	}
+	
+	||
+	{
+		loop{
+			present(systemEnable) {
+				emit systemEnableFiller;
+			} pause;
+		}
+	}
+
+	
+}

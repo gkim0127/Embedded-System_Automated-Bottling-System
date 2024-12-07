@@ -1,0 +1,45 @@
+ConveyorController(
+		input signal bottleAtLoad, bottleAtPos1, bottleLeftPos5; // these are input signals from ConveyorControllerCD
+		output signal motConveyorOnOff;
+		input Integer signal mode;
+		input signal motConveyorOnOffM; //  input signal from motConveyorOnOff button from GUI
+		)
+->
+{	
+	signal selectM, selectA;
+	emit selectA; // default auto mode
+
+	{//Manual
+		while(true){
+			await(selectM);
+			abort(selectA){
+				{while(true){present(motConveyorOnOffM){emit motConveyorOnOff;} pause;}}
+			}
+		}
+	}	
+	||
+	{//Auto
+		while (true){
+		await(selectA);
+			abort(selectM){
+				await(bottleAtLoad); // position 2
+				abort(!bottleLeftPos5 && !bottleAtPos1){
+					sustain motConveyorOnOff;
+				}
+			}	
+		}
+	}
+	||
+	{//Mode select
+		await(mode);
+		while(true){
+			if((Integer)#mode == 1){
+				emit selectM;
+			}
+			else{
+				emit selectA;
+			}
+			pause;
+		}
+	}
+}

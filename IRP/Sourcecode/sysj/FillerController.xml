@@ -1,0 +1,24 @@
+<System xmlns="http://systemjtechnology.com">
+	<SubSystem Name="SS1" Local="true">
+		<ClockDomain Name="FillerControllerCD" Class="FillerController">
+		
+			<iSignal Name="bottleAtPos2"    Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10002" />
+			<iSignal Name="dosUnitEvac"  	Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10002" />
+			<iSignal Name="dosUnitFilled"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10002" />
+			<iSignal Name="enable"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10002" />
+			<iSignal Name="enable2E"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10002" />
+			
+
+			
+			<oSignal Name="valveInjectorOnOff"  To="FillerPlantCD.valveInjectorOnOff" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10003" />
+            <oSignal Name="valveInletOnOff"		To="FillerPlantCD.valveInletOnOff" 		Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10003" />
+			<oSignal Name="dosUnitValveRetract" To="FillerPlantCD.dosUnitValveRetract" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10003" />
+			<oSignal Name="dosUnitValveExtend"  To="FillerPlantCD.dosUnitValveExtend" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10003" />
+			<oSignal Name="fillerReady"  To="FillerPlantCD.fillerReady" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10003" />
+			<oSignal Name="jobDone"  To="FillerPlantCD.jobDone" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10003" />
+			<oSignal Name="fillerReadyChannel"  To="FillerPlantCD.fillerReadyChannel" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10003" />
+
+
+		</ClockDomain>
+	</SubSystem>
+</System>

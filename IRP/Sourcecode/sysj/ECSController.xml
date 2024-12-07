@@ -1,0 +1,58 @@
+<System xmlns="http://systemjtechnology.com">
+	<SubSystem Name="SS5" Local="true">
+		<ClockDomain Name="ECSControllerCD" Class="ECSController">
+			<!--Input Signals-->
+			<iSignal Name="officeTemp" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="officeHumidity" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="officeLumen" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="storageTemp" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="storageHumidity" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="storageLumen" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="manufactureTemp" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="manufactureHumidity" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="manufactureLumen" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="officeHIR" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="storageHIR" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="manufactureHIR" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="officeSmoke" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="storageSmoke" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<iSignal Name="manufactureSmoke" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			
+			<iSignal Name="time" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10025"/>
+			<!--Output Signals-->
+			<oSignal Name="officeAC" To="UI.officeAC" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="officeHeater" To="UI.officeHeater" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="officeLight100" To="UI.officeLight100" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="officeLight80" To="UI.officeLight80" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="officeLight50" To="UI.officeLight50" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="officeLight0" To="UI.officeLight0" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			
+			<oSignal Name="storageAC" To="UI.storageAC" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="storageLight100" To="UI.storageLight100" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="storageLight80" To="UI.storageLight80" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="storageLight50" To="UI.storageLight50" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="storageLight0" To="UI.storageLight0" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			
+			<oSignal Name="manufactureAC" To="UI.manufactureAC" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="manufactureLight100" To="UI.manufactureLight100" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="manufactureLight80" To="UI.manufactureLight80" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="manufactureLight50" To="UI.manufactureLight50" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="manufactureLight0" To="UI.manufactureLight0" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			
+			<oSignal Name="officeSiren" To="UI.officeSiren" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="storageSiren" To="UI.storageSiren" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="manufactureSiren" To="UI.manufactureSiren" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			
+			<oSignal Name="officeSirenA" To="ACSControllerCD.officeSirenA" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="storageSirenA" To="ACSControllerCD.storageSirenA" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="manufactureSirenA" To="ACSControllerCD.manufactureSirenA" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			
+			<oSignal Name="officeOccupancy" To="UI.officeOccupancy" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="storageOccupancy" To="UI.storageOccupancy" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			<oSignal Name="manufactureOccupancy" To="UI.manufactureOccupancy" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10026"/>
+			
+			
+			
+		</ClockDomain>
+	</SubSystem>
+</System>

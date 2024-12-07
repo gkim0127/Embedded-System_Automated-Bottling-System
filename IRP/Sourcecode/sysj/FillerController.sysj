@@ -1,0 +1,58 @@
+FillerController(
+		// signals here
+		input signal bottleAtPos2, dosUnitEvac, dosUnitFilled; //, 4FillerComplete;
+		output signal valveInjectorOnOff, valveInletOnOff, dosUnitValveRetract, dosUnitValveExtend;
+		output signal fillerReady, jobDone;
+		output Boolean signal fillerReadyChannel;
+		input signal enable;
+		input signal enable2E;
+
+		)
+->{
+	// control logic of FillerController
+	/*
+	 * - only operates if a bottle is detected at position 2 (bottleAtPos2)
+	 * - turn on valve injector with the valveInjectorOnOff signal
+	 * - dosUnitEvac signal emitted when pressure at cannister at bottom -> should emit dosUnitValveRestract signal
+	 * - cylinder fully retracted -> dosUnitFilled emitted
+	 * - injector turned off by absence of valveInjectorOnOff signal
+	 * - valveInletOnOff signal emitted to open inlet valve
+	 * - dosUnitValveExtend signal emitted to push pressure cannister down
+	 * 
+	 * */
+	
+
+	loop { 
+		
+		await(bottleAtPos2);
+		System.out.println("Bottle at pos 2");
+		
+		await(enable || enable2E || bottleAtPos2); 
+		
+		abort(dosUnitFilled){
+			{
+				sustain valveInjectorOnOff;
+			}
+			||
+			{
+				sustain dosUnitValveRetract;
+			}
+		}
+		
+		System.out.println("done 1");
+		
+		await(enable || enable2E || bottleAtPos2);
+		
+		abort(dosUnitEvac){
+			{
+				sustain valveInletOnOff;
+			}
+			||
+			{
+				sustain dosUnitValveExtend;
+			}
+		}
+		System.out.println("done 2");
+	}
+
+}

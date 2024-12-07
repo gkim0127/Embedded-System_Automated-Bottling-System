@@ -1,0 +1,35 @@
+<System xmlns="http://systemjtechnology.com">
+	<SubSystem Name="SS1" Local="true">
+		<ClockDomain Name="CapLoaderControllerCD" Class="CapLoaderController">
+			<iSignal Name="pusherRetracted" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+			<iSignal Name="pusherExtended"  Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+			<iSignal Name="WPgripped"       Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+			<iSignal Name="armAtSource"     Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+			<iSignal Name="armAtDest"       Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+			<iSignal Name="empty"           Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+			<iSignal Name="request"         Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+			<iSignal Name="bottleAtPos4Capper"         Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+			
+			
+			
+			<iSignal Name="bottleAtPos3"    Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+
+
+			<iSignal Name="mode"    Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+
+
+			<oSignal Name="pusherExtend" To="CapLoaderPlantCD.pusherExtend" Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10001" />
+			<oSignal Name="vacOn"        To="CapLoaderPlantCD.vacOn"        Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10001" />
+			<oSignal Name="armSource"    To="CapLoaderPlantCD.armSource"    Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10001" />
+			<oSignal Name="armDest"      To="CapLoaderPlantCD.armDest"      Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10001" />
+			
+			<oSignal Name="bottleDonePos3"      To="RotaryControllerCD.bottleDonePos3"      Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="30002" />
+
+			
+			<iSignal Name="pusherExtendM" Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+			<iSignal Name="vacOnM"        Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+			<iSignal Name="armSourceM"    Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+			<iSignal Name="armDestM"      Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10005" />
+		</ClockDomain>
+	</SubSystem>
+</System>

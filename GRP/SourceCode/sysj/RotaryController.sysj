@@ -1,0 +1,248 @@
+RotaryControllerCD(
+	input signal bottleAtPos1, capOnBottleAtPos1; // removed bottleAtPos3 from input signals
+	output signal bottleAtPos4,bottleAtPos2 ,bottleAtPos2F, bottleAtPos5;
+	
+	input signal tableAlignedWithSensor, bottleDonePos1, bottleDonePos2, bottleDonePos3, bottleDonePos4, bottleLeftPos5;
+	input signal enable;
+	output signal rotaryTableTrigger;
+	input Integer signal mode;
+	output signal bottleAtPos1E, bottleAtPos2E, bottleAtPos3E, bottleAtPos4E, bottleAtPos5E;
+	output signal bottleDonePos1E, bottleDonePos2E, bottleDonePos3E, bottleDonePos4E, bottleLeftPos5E;
+	input signal filler_all_completeE;
+	
+	output signal bottleAtPos3;
+	output signal bottleAtPos4Capper;
+	output signal bottleLeftPos5EConveyor;
+	
+	input signal bottleLeftPos5RotaryE; // from conveyorplant
+	
+	input signal bottleAtPos1R; // from the conveyor plant
+	
+	output signal fillerReadyStart; // output to filler plant to act as enable button
+	
+	
+		)
+
+
+
+
+->{
+
+	signal auto, manual;
+	emit auto; // default auto at start
+	
+	loop {// outer loop
+		
+		loop {
+				await(mode);
+				while(true){
+					if((Integer)#mode == 1){
+						emit manual;
+						//System.out.println("manual mode ");
+					}
+					else{
+						emit auto;
+						//System.out.println("auto mode ");
+					}
+					pause;		
+			}
+		}
+		||
+		
+		loop{ //manual loop 
+			await(manual);
+			abort(auto){
+		loop { // posion1 reaction
+				
+				await(bottleAtPos1R);
+				System.out.println("bottleAtPos1 ");
+				emit bottleAtPos1E;
+				await(enable);
+				abort(tableAlignedWithSensor){
+					sustain rotaryTableTrigger;
+				}
+				
+				System.out.println("bottleAtPos2E ");
+				emit bottleAtPos2E;
+				abort(bottleDonePos2){
+					while(true){emit bottleAtPos2; pause;}
+					
+				}
+				
+			 			
+			}
+			
+		||
+		loop { // // posion2 reaction
+				await(bottleDonePos2);
+				System.out.println("bottleDonePos2E ");
+				emit bottleDonePos2E;
+				await(enable);
+				abort(tableAlignedWithSensor){
+					
+					sustain rotaryTableTrigger;
+				
+				}
+				System.out.println("bottleAtPos3E ");
+				abort(bottleDonePos3){
+					while(true){emit bottleAtPos3E; emit bottleAtPos2F; pause;}
+				}
+			}
+		||
+		loop { // posion3 reaction
+			
+				await(bottleDonePos3);
+				System.out.println("bottleDonePos3E ");
+				emit bottleDonePos3E;
+				await(enable);
+				abort(tableAlignedWithSensor){
+					
+					sustain rotaryTableTrigger;
+				
+				}
+				System.out.println("bottleAtPos4E ");
+			
+				emit bottleAtPos4E;
+				abort(bottleDonePos4){
+				sustain bottleAtPos4;
+				}
+			}
+			
+		||
+		loop { // // posion4 reaction
+				await(bottleDonePos4);
+				System.out.println("bottleDonePos4E ");
+				emit bottleDonePos4E;
+				await(enable);
+				abort(tableAlignedWithSensor){
+					
+					sustain rotaryTableTrigger;
+				
+				}
+				System.out.println("bottleAtPos5E ");
+				abort(bottleLeftPos5){
+					while(true){emit bottleAtPos5E; emit bottleAtPos5; pause;}
+				}
+			 }
+				
+		||
+		loop { // posion5 reaction
+				await(bottleLeftPos5);
+				System.out.println("bottleLeftPos5E ");
+				emit bottleLeftPos5E;
+			 }	
+			
+		}
+		}
+		
+		||
+		loop{ // ============================== auto loop ==============================
+			await(auto);
+			System.out.println("Auto mode selected");
+			abort(manual){
+				loop { // posion1 reaction
+						
+						await(bottleAtPos1R || enable);
+						System.out.println("-------------- Start of entire rotary cycle --------------");
+		//				await(enable);
+						
+						System.out.println("bottleAtPos1 ");
+						waitl(0.5 s);
+						emit bottleAtPos1E;
+						waitl(1 s); // allow time to change cap colour before moving to next position
+						
+						abort(tableAlignedWithSensor){
+							sustain rotaryTableTrigger;
+						}
+						
+						System.out.println("bottleAtPos2E ");
+//						emit bottleAtPos2E;
+						abort(bottleDonePos2) {
+							while(true) {emit bottleAtPos2; emit bottleAtPos2E; emit fillerReadyStart; pause;}
+						}
+						
+					}
+					
+				||
+				
+				loop { // // posion2 reaction
+						await(bottleDonePos2);
+						System.out.println("bottleDonePos2E ");
+						
+						emit bottleDonePos2E;
+						waitl(1 s); // allow time to change to blue cap before moving to next position
+						
+						abort(tableAlignedWithSensor){
+							sustain rotaryTableTrigger;
+						}
+		
+						abort(bottleDonePos3) {
+							while(true) {emit bottleAtPos3; emit bottleAtPos3E; emit bottleAtPos2F;pause;} // note bottleAtPos3E is for the UI update to position 3
+						}
+					}
+				
+				||
+				
+				loop { // posion3 reaction
+					
+						await(bottleDonePos3);
+						System.out.println("==============bottleDonePos3E ");
+						
+						emit bottleDonePos3E; // for the UI to change to red cap
+						waitl(1 s); // allow time to change to red cap before moving to next position
+						
+						abort(tableAlignedWithSensor){
+							sustain rotaryTableTrigger;
+						}
+						
+						abort(bottleDonePos4) {
+							while(true) {emit bottleAtPos4; emit bottleAtPos4E; emit bottleAtPos4Capper; pause;} // note bottleAtPos4E is for the UI update to position 4
+						}
+						
+						System.out.println("-------------bottleAtPos4E ");
+						
+					}
+					
+				||
+				
+				loop { // // posion4 reaction
+						await(bottleDonePos4);
+						System.out.println("position 4: bottleDonePos4E ");
+						
+						emit bottleDonePos4E;	// for the UI to change to green cap
+						waitl(1 s); // allow time to change to green cap before moving to next position
+						
+						abort(tableAlignedWithSensor){
+							sustain rotaryTableTrigger;
+						}
+						
+						// bottleLeftPos5RotaryE signals that the bottle is about to leave the rotary turntable
+						abort(bottleLeftPos5RotaryE) { // bottleLeftPos5 signal seems to be coming from manual 'TakeBottle' button only
+							while(true) {emit bottleAtPos5; emit bottleAtPos5E; pause;} // note bottleAtPos5E is for the UI update to position 5, tell conveyor to go into state 3
+						}
+						
+						System.out.println("bottleAtPos5E ");
+					 }
+						
+				||
+				
+				loop { // posion5 reaction
+						await(bottleLeftPos5RotaryE);
+						System.out.println("bottleLeftPos5E ");
+						emit bottleLeftPos5E; // remove bottle from rotary turntable
+						System.out.println("-------------- End of entire rotary cycle --------------");
+					 }	
+			
+		}
+		}
+		}
+	||
+	{
+		{while(true){present(bottleLeftPos5E){emit bottleLeftPos5EConveyor;} pause;}} // for when bottle is removed from rotary
+		
+	}
+
+
+
+
+}

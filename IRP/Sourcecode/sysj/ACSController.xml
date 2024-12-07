@@ -1,0 +1,36 @@
+<System xmlns="http://systemjtechnology.com">
+	<SubSystem Name="SS3" Local="true">
+		<ClockDomain Name="ACSControllerCD" Class="ACSController">	
+			
+			<iSignal Name="SirenM"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+			<iSignal Name="ManufactureM"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+			
+			
+			<iSignal Name="badgeID"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+			<iSignal Name="smokeAlarmHealth"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+			<iSignal Name="humanPresenceManufacture"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+			<iSignal Name="badgeLocation"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+			<iSignal Name="badgeAccessPermission"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+			<iSignal Name="cardAccessPermission"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+			<iSignal Name="doorReader"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+			<iSignal Name="humanAcrossDoor"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+			<iSignal Name="smokeAlarmDetected"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+			
+			<iSignal Name="disarm"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="31051" />	
+
+			
+			
+			<oSignal Name="SirenOn" 		To="ACSPlantCD.SirenOn" 	 Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="32050" />
+			<oSignal Name="SirenOff" 		To="ACSPlantCD.SirenOff" 	 Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="32050" />
+			<oSignal Name="DoorLock" 		To="ACSPlantCD.DoorLock" 	 Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="32050" />
+			<oSignal Name="DoorUnlock" 		To="ACSPlantCD.DoorUnlock" 	 Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="32050" />
+			<oSignal Name="enableManufacture" 		To="ACSPlantCD.enableManufacture" 	 Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="32050" />
+
+			
+			<oSignal Name="disableManufacture" 		To="ACSPlantCD.disableManufacture" 	 Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="32050" />
+
+
+
+		</ClockDomain>
+	</SubSystem>
+</System>

@@ -1,0 +1,51 @@
+<System xmlns="http://systemjtechnology.com">
+	<SubSystem Name="SS1" Local="true">
+		<ClockDomain Name="FillerPlantCD" Class="FillerPlant">
+			
+			<iSignal Name="valveInjectorOnOff"	Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			<iSignal Name="valveInletOnOff"		Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			<iSignal Name="dosUnitValveRetract"	Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			<iSignal Name="dosUnitValveExtend"	Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			<iSignal Name="fillerReady"			Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			<iSignal Name="fillerReadyStart"			Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			
+			
+			<iSignal Name="LiquidAmount1E"		Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			<iSignal Name="LiquidAmount2E"		Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			<iSignal Name="LiquidAmount3E"		Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			<iSignal Name="LiquidAmount4E"		Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			<iSignal Name="BottleQuantityE"		Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			
+			<iSignal Name="systemEnableFiller"		Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			
+			<oSignal Name="disableConveyorMain" 	To="MainControllerCD.disableConveyorMain" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10200" />
+
+			
+			<iSignal Name="bottleAtPos2F"			Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+		
+			
+			
+			<iSignal Name="enable"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+			<iSignal Name="enableFiller"   Class="com.systemj.ipc.SimpleServer" IP="127.0.0.1" Port="10003" />
+
+			<oSignal Name="dosUnitEvac" 	To="FillerControllerCD.dosUnitEvac" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10002" />
+			<oSignal Name="dosUnitFilled" 	To="FillerControllerCD.dosUnitFilled" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10002" />
+			<oSignal Name="enable2E" 	To="FillerControllerCD.enable2E" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10002" />
+			
+			<oSignal Name="Filler_4E" 	To="UI.Filler_4E" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10004" />
+			<oSignal Name="Filler_3E" 	To="UI.Filler_3E" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10004" />
+			<oSignal Name="Filler_2E" 	To="UI.Filler_2E" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10004" />
+			<oSignal Name="Filler_1E" 	To="UI.Filler_1E" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10004" />
+			<oSignal Name="Filler_0E" 	To="UI.Filler_0E" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10004" />
+			<oSignal Name="dosUnitFilledE" 	To="UI.dosUnitFilledE" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10004" />
+			<oSignal Name="dosUnitEvacE" 	To="UI.dosUnitEvacE" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="10004" />
+			
+			<oSignal Name="bottleDonePos2"  To="RotaryControllerCD.bottleDonePos2" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="30002" />
+			<oSignal Name="filler_all_completeE"  To="RotaryControllerCD.filler_all_completeE" 	Class="com.systemj.ipc.SimpleClient" IP="127.0.0.1" Port="30002" />
+			
+
+
+
+		</ClockDomain>
+	</SubSystem>
+</System>
