@@ -1,0 +1,217 @@
+ConveyorPlant(
+		input signal motConveyorOnOff, enableConveyor;
+		input signal enable, refill,bottleAtPos5; 
+		input signal DONE;
+//		input Integer signal bottleNumber;
+		output signal bottleAtLoad, bottleAtPos1, bottleLeftPos5,bottleAtPos1R;
+		output signal bottleAtLoadE, bottleAtPos1E, bottleLeftPos5E;  // these output signals are sent to the UI
+		output signal bottleAtPos1M; // sent to ControllerMainCD
+		output signal bottleDoneE; 
+		
+		input signal bottleLeftPos5EConveyor; // from rotary controller
+		input signal bottleDonePos2Conveyor; // from filler plant
+		)
+->
+{
+//	class GUI implements java.lang.Runnable {
+//		public void run() {
+//			org.compsys704.Conveyor.main(null);
+//		}
+//	}
+//	new Thread(new GUI()).start();
+	
+	int signal bottleNumber; // use as placeholder for now, replace with input from POS system
+
+	signal bottleDec, bottleAt1, bottleAtL, bottleAt5, motorOn, motorOff, empty;
+	signal bottleAtA;
+	
+	signal bottledone;
+	
+	signal state1, state2, state3, state4;
+	
+	int signal bottlePos;
+	emit bottlePos(0);
+	emit bottleNumber((Integer)#bottleNumber + 5);
+	pause;
+	System.out.println("Bottle number is: "+(Integer)#bottleNumber);
+	{//Conveyor
+		while(true){
+			abort (immediate (motConveyorOnOff)){
+				System.out.println("motorOff");
+				sustain motorOff;
+			}
+			
+			abort((!motConveyorOnOff)){
+				System.out.println("motorOn");
+				sustain motorOn;
+			}
+			
+		}
+	}
+//	||
+//	{
+//		while(true){
+//		int data = #bottlePos;
+//			await(enableConveyor);
+//			abort(immediate (!enableConveyor)){
+//			if((Integer)#bottlePos == 0){
+//				abort(bottleAt1){
+//					System.out.println("bottleAtLoad");
+//					sustain bottleAtLoad;
+//				}
+//			}
+//			else if((Integer)#bottlePos == 1){
+//				abort(bottleAt5){
+//					System.out.println("bottleAtPos1");
+//					{sustain bottleAtPos1;}
+//					||
+//					{sustain bottleAtPos1M;}
+//					||
+//					{sustain bottleAtPos1R; }
+//				}
+//			}
+//			else if((Integer)#bottlePos == 2){
+//				abort(bottleAtA){
+//					System.out.println("bottleLeftPos5");
+//					sustain bottleLeftPos5;
+//				}
+//			}
+//			else if((Integer)#bottlePos == 3){
+//				abort(bottleAtL){
+//					System.out.println("bottledone");
+//					sustain bottledone;
+//				}
+//			}
+//			pause;
+//			}
+//		}
+//	}
+	||
+	{
+		/*
+		 * Bottle positions
+		 * 0 = at Load
+		 * 1 = at Pos1
+		 * 2 = at Pos5
+		 */
+		while(true){
+			// At Load
+//			abort(empty){
+				while(true){
+//					emit bottlePos(0);
+//					emit bottleAtL;
+//					System.out.println("bottleAtL emitted");
+//					await(motorOn);
+//					// At pos 1
+//					emit bottlePos(1);
+//					emit bottleAt1;
+//					System.out.println("bottleAt1 emitted");
+//					await (enable && motorOn);
+//					emit bottlePos(2);
+//					emit bottleAt5;
+//					System.out.println("bottleAt5 + pos 2 emitted");
+////					await (!enable);
+//					await(DONE);
+//					emit bottlePos(3);
+//					System.out.println("System is done + pos 3");
+//					emit bottleAtA;
+					
+					
+					
+					
+					waitl(1 s); // placeholder
+					
+//					await(enable); // state 1, start the conveyor
+					emit state1;
+					pause;
+//					emit bottleAtLoad;
+//					emit bottlePos(0);
+//					emit bottleAtL;
+					
+					
+					
+					
+					
+//					waitl(1 s); // placeholder
+//					
+////					await(enable); // signal from POS, move to state 2
+//					emit state2;
+////					emit bottleAtPos1;
+//					abort(bottleDonePos2Conveyor) {	// doneAtPos4Conveyor
+//						{
+//							sustain bottleAtPos1;
+//						}
+//						||
+//						{
+//							sustain bottleAtPos1R;
+//						}
+//					}
+//					System.out.println("signal from POS, move to state 2");
+////					emit bottlePos(1);
+////					emit bottleAt5;
+					
+					
+					
+					
+					
+//					await(bottleAtPos5); // signal from Rotary Turntable that Capper is complete, move to state 3	// doneAtPos4Conveyor
+//					emit state3;
+//					abort(enable){
+//						sustain bottleLeftPos5;
+//					}
+//					System.out.println("signal from Rotary Turntable that Capper is complete, move to state 3");
+////					emit bottlePos(2);
+////					emit bottleAtA;
+//					
+//					
+//					
+//					
+//					
+//					await(bottleAtPos5); // wait 1s and move to state 4 to be taken by baxter robot
+//					emit state4;
+//					abort(enable){
+//						sustain bottledone;
+//					}
+//					System.out.println("wait 1s and move to state 4 to be taken by baxter robot");
+////					emit bottlePos(3);
+////					emit bottleAt1;
+//					
+////					await(enable); // replace this with another signal that indicates the entire process has restarted
+					
+					
+				}
+//			}
+//			await(refill);
+		}
+	}
+	||
+//	{
+//		int bottlecount;
+//		while(true){
+//			await (bottleNumber);
+//			bottlecount = (Integer) #bottleNumber;
+//			present(bottleDec){
+//				if(bottlecount > 0)
+//					bottlecount--;
+//			}
+//			present(refill){
+//				bottlecount = (Integer) #bottleNumber;
+//			}
+//			if(bottlecount == 0)
+//			emit empty;
+//			System.out.println("Empty Emitted");
+//			pause;
+//		}
+//	}
+//	||
+	{// To viz
+		{while(true){present(bottleAtPos1){emit bottleAtPos1E;} pause;}}
+		||
+		{while(true){present(bottleLeftPos5){emit bottleLeftPos5E;} pause;}}
+		||
+		{while(true){present(bottleAtLoad){emit bottleAtLoadE;} pause;}}
+		||
+		{while(true){present(bottledone){emit bottleDoneE;} pause;}}
+	}
+
+}

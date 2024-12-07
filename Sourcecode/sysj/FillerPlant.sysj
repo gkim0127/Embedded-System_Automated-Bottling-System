@@ -1,0 +1,323 @@
+//import run.GUI;
+
+// FillerPlant
+FillerPlant(
+		// signals here
+		input signal valveInjectorOnOff, valveInletOnOff, dosUnitValveRetract, dosUnitValveExtend;
+		input signal enable;
+		input signal fillerReady,jobDone;
+		output signal bottleAtPos2, injectorOn, injectorOff, bottleDonePos2;
+		output signal dosUnitEvac, dosUnitFilled;
+		input Boolean signal fillerReadyChannel;
+		
+		input signal enableFiller;
+		
+		input int signal LiquidAmount1E, LiquidAmount2E, LiquidAmount3E, LiquidAmount4E, BottleQuantityE;
+		
+		output signal Filler_4E, Filler_3E, Filler_2E, Filler_1E, Filler_0E;
+		output signal dosUnitFilledE, dosUnitEvacE;
+		output signal enable2E;
+		input signal bottleAtPos2F;
+		output signal filler_all_completeE;
+		
+		output signal bottleDonePos2Conveyor;
+//		output signal valveInjectorOnOffE, valveInletOnOffE, dosUnitValveRetractE, dosUnitValveExtendE
+		
+//		output signal 4FillerComplete;
+
+		
+		)
+->
+{
+	// TODO: FillerPlant logic here
+	// Four separate fillers required
+	// Need to ensure no liquid overflow occurs - use additional signals for this
+	
+	// basic operations
+	/**
+	 *	
+	 	1. Check if a bottle is at position 2, if not, wait until it arrives
+		2. Turn on the valve injector
+		3. Check if a pressure canister is at bottom, if so bring it up to fill the bottle with liquid
+		4. Wait until the cylinder is fully retracted (i.e. at top)
+		5. Turn off the injector
+		6. Open the inlet
+		7. Force down the pressure canister
+		8. Wait until the cylinder is fully extended (i.e. at bottom)
+		9. Close the inlet 
+	 * 
+	 * 
+	 *
+	 * */
+	
+	
+//	class GUI implements java.lang.Runnable {
+//		public void run() {
+//			org.compsys704.FillerGUI.main(null);
+//		}
+//		}
+//	
+//	new Thread(new GUI()).start();
+	
+	int signal FillerStatus;
+	boolean signal stopAllStatus;
+	emit stopAllStatus(false);
+	emit FillerStatus(0);
+	
+	signal fillerNotDone;
+	signal fillerDone;
+	signal stopAll;
+	
+	
+	boolean signal filler1_status, filler2_status, filler3_status, filler4_status;
+	
+	
+//	boolean signal filler1_status = true;
+//	boolean signal filler2_status = true;
+//	boolean signal filler3_status = true;
+//	boolean signal filler4_status = true;
+//	
+//	boolean signal filler_all_complete = false;
+	
+	signal filler1done;
+	signal filler2done;
+	signal filler3done;
+	signal filler4done;
+	signal filler_all_complete;
+	
+	signal filler_0, filler_1, filler_2, filler_3, filler_4;
+	signal dosUnitFilledM, dosUnitEvacM;
+	signal filler_1_In, filler_2_In, filler_3_In, filler_4_In;
+	signal enable2;
+	
+//	int signal totalBottleNumber = (Integer)#BottleQuantityE;
+	
+	
+	int signal fillerNumber;
+//	emit fillerNumber(4);
+//	emit fillerNumber((Integer)#fillerNumber + 4);
+	
+	
+//	emit filler_number(1);
+	
+//	emit filler_0;	// no fillers present
+	await(enable || enable2);
+//	emit filler_4;	// load 4 fillers
+	emit fillerNumber((Integer)#fillerNumber + 4);
+	
+	
+	
+	loop {
+//			emit fillerNumber(4);
+		
+			if ((Integer)#fillerNumber == 0) {
+				emit filler_0;
+			}
+			
+		
+		
+//			if ((Integer)#fillerNumber == 4) {
+//				emit filler_3;	
+//			} else if ((Integer)#fillerNumber == 3) {
+//				emit filler_2;
+//			} else if ((Integer)#fillerNumber == 2) {
+//				emit filler_1;
+//			} else if ((Integer)#fillerNumber == 1) {
+//				emit filler_4; // all fillers empty
+//			} else if ((Integer)#fillerNumber == 0) {
+//				emit filler_0;
+//			}
+			pause; //await tick
+//			
+			if ((Integer)#fillerNumber == 4) {
+				emit filler_4;	
+			} else if ((Integer)#fillerNumber == 3) {
+				emit filler_3;
+			} else if ((Integer)#fillerNumber == 2) {
+				emit filler_2;
+			} else if ((Integer)#fillerNumber == 1) {
+				emit filler_1; // all fillers empty
+			} 
+			
+			else if ((Integer)#fillerNumber == 0) {
+				emit filler_0;
+			}
+//			else {
+//				emit filler_4;
+//			}
+		
+//			System.out.println('Current bottle: ' + (Integer)#fillerNumber);
+			await(enable || enable2);
+			System.out.println("----------------------------------------Beginning filler: " + (Integer)#fillerNumber);
+			await(valveInjectorOnOff && dosUnitValveRetract);
+			System.out.println("First cycle -- valveInjectorOnOff && dosUnitValveRetract");
+			waitl(1 s);
+			abort(enable || enable2) {
+				sustain dosUnitFilled;
+			}
+			
+			emit dosUnitFilledM;
+			waitl(1 s);
+			System.out.println("First cycle complete");
+			
+			await(valveInletOnOff && dosUnitValveExtend);
+			System.out.println("Second cycle -- valveInletOnOff && dosUnitValveExtend");
+			waitl(1 s);
+			abort(enable || enable2) {
+				sustain dosUnitEvac;
+			}
+			
+			emit dosUnitEvacM;
+			waitl(1 s);
+			System.out.println("Second cycle complete");
+//			present(filler_all_complete) {
+//				emit bottleAtPos2;
+//			}
+			
+			
+			System.out.println("----------------------------------------Filler number: " + (Integer)#fillerNumber + " complete");
+			emit fillerNumber((Integer)#fillerNumber - 1);
+			
+
+	}
+//	||
+//	loop {
+//		if((#filler1_status == false) && (#filler1_status == false) && (#filler1_status == false) && (#filler1_status == false)) {
+//			sustain filler_all_complete;
+//		}
+//		pause;
+//	}
+	|| // to viz
+	{
+		{while(true){present(filler_4){emit Filler_4E; System.out.println("Emitted Filler_4E");} pause;}}
+		||
+		{while(true){present(filler_3){emit Filler_3E; System.out.println("Emitted Filler_3E");} pause;}}
+		||
+		{while(true){present(filler_2){emit Filler_2E; System.out.println("Emitted Filler_2E");} pause;}}
+		||
+		{while(true){present(filler_1){emit Filler_1E; System.out.println("Emitted Filler_1E");} pause;}}
+		||
+		{while(true){present(filler_0){emit Filler_0E; System.out.println("Emitted Filler_0E");} pause;}}
+		||
+		{while(true){present(dosUnitFilledM){emit dosUnitFilledE; System.out.println("Emitted dosUnitFilledE");} pause;}}
+		||
+		{while(true){present(dosUnitEvacM){emit dosUnitEvacE; System.out.println("Emitted dosUnitEvacE");} pause;}}	
+		||
+		{while(true){present(enable2){emit enable2E;} pause;}}		// System.out.println("Emitted enable2E")
+		
+		
+	}
+	||
+	{
+//		loop{
+//			abort(stopAll){
+//				while(true) {
+//					if((Integer)#fillerNumber != 0) {
+//						emit bottleAtPos2;
+//						emit enable2;
+//					}
+//					pause;
+//				}
+//			}
+			
+			while(true) {
+				if((Boolean)#stopAllStatus==true) {
+					abort(enableFiller){
+						halt;
+					}
+				} else if ((Boolean)#stopAllStatus==false) {
+					emit bottleAtPos2;
+					emit enable2;
+				}
+				pause;
+			}
+			
+			
+//		}
+	}
+	||
+	{
+		pause; // await a tick
+		while(true) {
+			if((Integer)#fillerNumber == 0) {
+				System.out.println("----------------------------------------All 4 fillers complete");
+				System.out.println(" ");
+				System.out.println("------------Status------------");
+				System.out.println("Liquid 1 Amount: "+((Integer)#LiquidAmount1E));
+				System.out.println("Liquid 2 Amount: "+((Integer)#LiquidAmount2E));
+				System.out.println("Liquid 3 Amount: "+((Integer)#LiquidAmount3E));
+				System.out.println("Liquid 4 Amount: "+((Integer)#LiquidAmount4E));
+				System.out.println(" ");
+				System.out.println("Bottle quantitiy left: "+((Integer)#BottleQuantityE - 1));
+				System.out.println("------------Status------------");
+				System.out.println(" ");
+
+				
+				
+				System.out.println(" ");
+				emit stopAll;
+				emit stopAllStatus(true);
+				emit filler_0;
+				emit fillerNumber((Integer)#fillerNumber + 4);
+	//			emit filler_0;
+	//		} else if ((Integer)#fillerNumber == 0) {
+	//			emit filler_0;
+				
+//				pause;
+//				emit filler_4;
+//				emit filler_all_complete;
+				
+				System.out.println("emiting bottleDonePos2");
+				
+				
+				abort(bottleAtPos2F){
+					{
+						sustain bottleDonePos2;
+					}
+					||
+					{
+						sustain bottleDonePos2Conveyor;
+					}
+				
+//				sustain filler_all_complete;
+				}
+				System.out.println("after bottleDonePos2");
+				}
+			pause;
+		}
+	}
+//	||
+//	{
+//		while(true) {
+//			if ((Integer)#fillerNumber == 4) {
+//				emit filler_4;	
+//			} else {
+//				// do nothing
+//			}
+//			pause;
+//		}
+//	}
+	||
+	{
+		while(true) {
+			present(enableFiller){
+//				System.out.println("enableFiller detected!");
+				emit filler_all_complete;
+				emit stopAllStatus(false);
+				emit filler_4;
+			}
+			pause;
+		}
+	}
+	||
+	{
+		while(true) {
+			present(filler_all_complete) {
+				emit filler_all_completeE;
+				System.out.println("filler all complete");
+			}
+			pause;
+		}
+	}
+
+}

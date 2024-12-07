@@ -1,0 +1,244 @@
+//// define signals 
+ECSController(
+	input Integer signal officeTemp, officeHumidity, officeLumen;
+	input Integer signal storageTemp, storageHumidity, storageLumen;
+	input Integer signal manufactureTemp, manufactureHumidity, manufactureLumen;
+	input signal officeHIR, storageHIR, manufactureHIR, officeSmoke, storageSmoke, manufactureSmoke;
+	
+	output signal officeAC, officeHeater, officeDehumidifier, officeLight100, officeLight80, officeLight50, officeLight0;
+	output signal storageAC, storageDehumidifier, storageLight100, storageLight80, storageLight50, storageLight0;
+	output signal manufactureAC, manufactureDehumidifier, manufactureLight100, manufactureLight80, manufactureLight50, manufactureLight0;
+	output signal officeSiren, storageSiren, manufactureSiren, officeSirenA, storageSirenA, manufactureSirenA;
+	output signal officeOccupancy, storageOccupancy, manufactureOccupancy;
+
+	input Integer signal time;
+		)
+->{
+	// basic operation 
+
+	//1. determine office Hour and not office hour using time
+	//2. AC for office, storage and manufacture sections with temperature over 23
+	//3. Heater for office with temperature under 23
+	//4. Dehumidifier for all three sections with humidity over 60%
+	//5. Occupancy depends on HIR sensor
+	//6. Lighting conditions depend on readings of lumen Sensors (under 20 -> 80 intensity, otherwise 50) during office hour
+	//7. Lighting conditions depend on occupancy during non office hour (100 intensity if human detected)
+	//7. Siren activated when smoke detected
+	
+	class GUI implements java.lang.Runnable {
+		public void run() {
+			org.compsys704.ECSGUI.main(null);
+		}
+	}
+	new Thread(new GUI()).start();
+
+	signal officeHour, notOfficeHour;		// office hour
+	
+	loop { // outer loop
+		// office hour- AC, Temp, light
+			{
+			loop {
+				await(officeHour);
+				System.out.println("office hour now- working with Temp");
+				abort(notOfficeHour){
+					{// office zone Temperature
+						loop {
+						await(officeTemp);
+						if ((Integer)#officeTemp > 23 ) {
+							System.out.println("office AC ON");
+							sustain officeAC;
+							} else if ((Integer)#officeTemp <23) {
+								System.out.println("office Heater ON");
+								sustain officeHeater;
+							} else {
+								System.out.println("office AC and Heater not operating");
+							}
+						}
+					}
+					||
+					{ // storage zone Temperature
+						loop {
+						await(storageTemp);
+						if ((Integer)#storageTemp > 23) {
+							System.out.println("storage AC ON");
+							sustain storageAC;
+							} else {
+								System.out.println("storage AC not operating");
+							}
+						}
+					}
+					||
+					{// manufacutre zone Temperature
+						loop {
+						await(storageTemp);
+						if ((Integer)#manufactureTemp > 23) {
+							System.out.println("manufacture AC ON");
+							sustain manufactureAC;
+							} else {
+								System.out.println("manufacture AC not operating");
+							}
+						}
+					}
+					||
+					{// office zone humidity
+						loop{
+						await(officeHumidity);
+						if ((Integer)#officeHumidity > 60) {
+							System.out.println("office Dehumidifier ON");
+							sustain officeDehumidifier;
+							} else {
+								System.out.println("office Dehumidifier not operating");
+							}
+						}
+					}
+					||
+					{ // storage zone humidity
+						loop{
+						await(storageHumidity);
+						if ((Integer)#storageHumidity > 60) {
+							System.out.println("storage Dehumidifier ON");
+							sustain storageDehumidifier;
+							} else {
+								System.out.println("storage Dehumidifier not operating");
+							}
+						}
+					}
+					||
+					{ // manufacture zone humidity
+						loop{
+						await(manufactureHumidity);
+						if ((Integer)#manufactureHumidity > 60) {
+							System.out.println("manufacture Dehumidifier ON");
+							sustain manufactureDehumidifier;
+							} else {
+								System.out.println("Dehumidifier not operating");
+							}
+						}
+					}
+					||
+					{ // office zone lumen
+						loop{
+						await(officeLumen);
+						if ((Integer)#officeLumen <30) {
+							System.out.println("Office Hour turn the light on 80 - office");
+							sustain officeLight80;
+						} else {
+							System.out.println("Office Hour turn the light on 50 - office");
+							sustain officeLight50;
+							}
+						}
+					}
+					||
+					{ // storage section lumen
+						loop {
+						await(storageLumen);
+						if ((Integer)#storageLumen <30) {
+								System.out.println("Office Hour turn the light on 80 - storage");
+								sustain storageLight80;
+							} else {
+								System.out.println("Office Hour turn the light on 50 - storage");
+								sustain storageLight50;
+							} 
+						}
+					}
+					||
+					{// manufacture section
+						loop {
+						await(manufactureLumen);
+						if ((Integer)#manufactureLumen <30) {
+								System.out.println("Office Hour turn the light on 80 - manufacture");
+								sustain manufactureLight80;
+							} else {
+								System.out.println("Office Hour turn the light on 50 - manufacture");
+								sustain manufactureLight50;
+							}
+						}
+					}
+				}
+			}
+		} //Temperature loop ends	
+		||// not office hour- light control
+		{
+			loop {
+				await (notOfficeHour);
+					abort(officeHour){
+						{ // office section
+							{
+								
+								await(officeHIR);
+								abort(!officeHIR){
+								System.out.println("Not office hour- human detected, light on 100 for office");
+								sustain officeLight100; }
+							}
+						}
+						||
+						{ // storage section
+							{
+								await(storageHIR);
+								abort(!storageHIR){
+								System.out.println("Not office hour- human detected, light on 100 for storage");
+								sustain storageLight100;}
+							}
+						}
+						||
+						{ // manufacture section
+							{
+								await(manufactureHIR);
+								abort(!manufactureHIR){
+								System.out.println("Not office hour- human detected, light on 100 for manufacture");
+								emit manufactureLight100;}
+							}
+						}
+					}
+				}
+		}
+		||
+		{ // smoke/fire detection
+			loop { 
+					{ // for office
+						await(officeSmoke);
+						abort(!officeSmoke){
+						System.out.println("smoke detected, activating siren - office");
+						sustain officeSiren;}
+					} 
+					||
+					{ // for storage
+						await(storageSmoke);
+						abort(!storageSmoke){
+						System.out.println("smoke detected, activating siren - storage");
+						sustain storageSiren; }
+					}
+					||
+					{
+						await(manufactureSmoke);
+						abort(!manufactureSmoke){
+						System.out.println("smoke detected, activating siren - storage");
+						sustain manufactureSiren;}
+					}
+				}
+		} // smoke/ fire detection ends
+		||
+		{
+			loop {
+				await(time);
+				if ((Integer)#time >= 9 && (Integer)#time < 17) {
+					System.out.println("Office Hour");
+					emit officeHour;
+				} else {
+					System.out.println("Not Office Hour");
+					emit notOfficeHour;
+				}
+			}
+		} // Time loop ends
+		||
+		{
+			{while(true){present(officeSmoke){emit officeSirenA;} pause;}}
+			||
+			{while(true){present(storageSmoke){emit storageSirenA;} pause;}}
+			||
+			{while(true){present(manufactureSmoke){emit manufactureSirenA;} pause;}}
+		}
+
+	}
+}
+		// end of outer loop

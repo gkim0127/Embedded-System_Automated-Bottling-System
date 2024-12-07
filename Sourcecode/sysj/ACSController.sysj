@@ -1,0 +1,112 @@
+ACSController(
+	input signal smokeAlarmHealth, humanPresenceManufacture;
+	input signal humanAcrossDoor, smokeAlarmDetected;
+	input Integer signal cardAccessPermission, doorReader, badgeLocation, badgeAccessPermission, badgeID;
+	
+	input signal SirenM, ManufactureM; 
+	
+	
+	input signal disarm;
+	output signal SirenOn,SirenOff ,DoorLock, DoorUnlock , enableManufacture, disableManufacture;
+
+		)
+
+
+
+
+->{
+	Integer signal trespasser;
+
+
+	loop{ //outer loop
+		
+		loop{
+			int badgeBoolean;
+			int badgePermission;
+			int badgeLoca;
+			int decimal;
+			int n;
+			await(badgeAccessPermission);
+			
+			badgePermission = (Integer)#badgeAccessPermission;
+			
+			while(true){
+			 if (badgePermission ==0){
+			 break;}
+			 else{
+			 int temp = badgePermission%10;
+			 decimal += temp*Math.pow(2,n);
+			 badgePermission = badgePermission/10;
+			 n++;
+			 
+			 }
+			}
+			
+			
+			badgeLoca = (Integer)#badgeLocation -1;
+			badgeBoolean = (decimal >> badgeLoca);
+			
+			if((badgeBoolean & 1) !=0 ){
+				System.out.println("AccessVerified ");
+
+			}else{
+				System.out.println("AccessDenied ");
+				abort(disarm){
+				while(true){emit trespasser;
+					//System.out.println("trespassers ");
+					pause;}
+			}
+			}
+			
+		}
+		||
+		loop{
+
+			await(doorReader);
+
+			if((Integer)#cardAccessPermission !=0 ){
+				System.out.println("DoorUnlocked ");
+				abort(humanAcrossDoor){
+				while(true){emit DoorUnlock; 
+				pause;
+				}
+				}
+				
+				
+				
+			}else{
+				//System.out.println("Door keep locking");
+				
+			}
+			abort(doorReader){
+				while(true){emit DoorLock; 
+				System.out.println("Door keep locking");
+				pause;
+				}
+				}
+			
+		}
+	
+		||
+		loop{
+			abort(humanPresenceManufacture||smokeAlarmDetected||trespasser){
+				while(true){emit SirenOff; emit enableManufacture; 
+				System.out.println("Siren is off ");
+				System.out.println("Manufacture is enabled ");
+				pause;}
+			}
+			abort(disarm){
+					while(true){emit SirenOn; emit disableManufacture; 
+					//System.out.println("humanPresenceManufacture ");
+					System.out.println("Siren is on ");
+					System.out.println("Manufacture is disabled ");
+					pause;}
+					
+				}
+				System.out.println("disarm being pressed ");
+		
+			}
+
+	}
+
+}

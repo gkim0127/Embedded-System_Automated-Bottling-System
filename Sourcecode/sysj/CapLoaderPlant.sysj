@@ -1,0 +1,78 @@
+ CapLoaderPlant(
+		input signal pusherExtend,vacOn,armSource,armDest;
+		input signal enable,refill;
+		output signal bottleAtPos3, pusherRetracted,pusherExtended,WPgripped,armAtSource,armAtDest,empty;
+		output signal bottleAtPos3E, pusherRetractedE,pusherExtendedE,WPgrippedE,armAtSourceE,armAtDestE,emptyE;
+		input signal enableCapLoader;
+		)
+->
+{
+//	class GUI implements java.lang.Runnable {
+//		public void run() {
+//			org.compsys704.CapLoader.main(null);
+//		}
+//	}
+//	new Thread(new GUI()).start();
+	{// Arm
+		while(true){
+			abort(armSource){
+				sustain armAtDest;
+			}
+			System.out.println("Arm: armSource aborted");
+			pause;
+			waitl(1 s);
+			abort(armDest){
+				sustain armAtSource;
+			}
+			System.out.println("Arm: armDest aborted");
+			pause;
+			waitl(1 s);
+		}
+	}
+	||
+	{// Pusher
+		while(true){
+			abort(pusherExtend){
+				sustain pusherRetracted;
+			}
+			System.out.println("Pusher: pusherExtend aborted");
+			pause;
+			waitl(1 s);
+			
+			abort(!pusherExtend){
+				sustain pusherExtended;
+			}
+			System.out.println("Pusher: !pusherExtend aborted");
+			pause;
+			waitl(1 s);
+		}
+	}
+	||
+	{// Vacuum
+		while(true){
+			present(vacOn && armAtSource){
+				abort(!vacOn){
+					sustain WPgripped; 
+				}
+				System.out.println("Vaccum: !vacOn aborted");
+			}
+			pause;
+			waitl(1 s);
+		}
+	}
+	
+	||
+	{// To viz
+		{while(true){present(pusherRetracted){emit pusherRetractedE;} pause;}}
+		||
+		{while(true){present(pusherExtended){emit pusherExtendedE;} pause;}}
+		||
+		{while(true){present(WPgripped){emit WPgrippedE;} pause;}}
+		||
+		{while(true){present(armAtSource){emit armAtSourceE;} pause;}}
+		||
+		{while(true){present(armAtDest){emit armAtDestE;} pause;}}
+		||
+		{while(true){present(empty){emit emptyE;} pause;}}
+	}
+}
