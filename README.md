@@ -15,4 +15,4 @@ ECS maintains temperature and humidity at the target levels in each zone, contro
 
 
 #### ABS folder includes files for Automated Bottling System
-#### ECS folder includes files for ABS and ECS
+#### ECS folder includes files for ABS and Environment Control System
